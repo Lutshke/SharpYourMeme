@@ -18,3 +18,10 @@ using SharpYourMeme;
 
 SearchResult result = await MemeSearch.GetArticles("pepe");
 ```
+
+**Or get an article with url**
+```cs
+using SharpYourMeme;
+
+SearchResult result = await MemeSearch.GetArticles("https://knowyourmeme.com/memes/shadilay");
+```
