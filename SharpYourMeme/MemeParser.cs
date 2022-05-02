@@ -2,13 +2,13 @@
 
 namespace SharpYourMeme;
 
-public static class SharpYourMemeClient
+public static class MemeSearch
 {
     private static HttpClient HttpClient { get; }
     private const string GridXPath = "/html/body/div[6]/div/div[3]/div[2]/div/table/tbody";
     private const string AboutXPath = "/html/body/div[5]/div/article/div[4]/section/div[1]/div[1]/div[1]/div/p";
 
-    static SharpYourMemeClient()
+    static MemeSearch()
     {
         HttpClient = new HttpClient();
         HttpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:99.0) Gecko/20100101 Firefox/99.0");
@@ -108,7 +108,7 @@ public static class SharpYourMemeClient
     /// <param name="query"></param>
     /// <param name="articles"></param>
     /// <returns></returns>
-    public static async Task<SearchResult> TryGetArticle(string query)
+    public static async Task<SearchResult> GetArticle(string query)
     {
         var url = GetQueryUrl(query);
 
@@ -132,7 +132,7 @@ public static class SharpYourMemeClient
     /// <param name="query"></param>
     /// <param name="articles"></param>
     /// <returns></returns>
-    public static async Task<SearchResult> TryGetArticles(string query)
+    public static async Task<SearchResult> GetArticles(string query)
     {
         var url = GetQueryUrl(query);
 
