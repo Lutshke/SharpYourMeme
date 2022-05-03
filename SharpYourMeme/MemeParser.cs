@@ -11,8 +11,7 @@ public static class MemeSearch
     private const string AboutXPath = "/html/body/div[5]/div/article/div[4]/section/div[1]/div[1]/div[1]/div/p";
 
     private static Stopwatch Stopwatch { get; set; }
-    public static long[] StopwatchTimes = new long[4];
-
+    private static long[] StopwatchTimes = new long[4];
     public static void PrintDebugTimes()
     {
         Console.WriteLine();
@@ -41,21 +40,23 @@ public static class MemeSearch
         return "https://knowyourmeme.com" + query;
     }
 
-    private static async Task<List<Article>> GetArticlesFromHtml(HtmlDocument htmlDoc, bool getSingleArticle)
+    private static async Task<Article[]> GetArticlesFromHtml(HtmlDocument htmlDoc, bool getSingleArticle)
     {
         var docNode = htmlDoc.DocumentNode;
         var collectionNode = docNode.SelectSingleNode(GridXPath);
         StopwatchTimes[2] = Stopwatch.ElapsedMilliseconds;
-        var articles = new List<Article>();
+        Article[] articles = new Article[16];
 
         if (getSingleArticle)
         {
             var firstArticle = collectionNode.GetFirstElementNode().GetFirstElementNode();
             var art = await GetArticleInfo(firstArticle);
-            articles.Add(art);
+            articles[0] = art;
         }
         else
         {
+            int index = 0;
+            List<Task> tasks = new();
             for (int row = 0; row < collectionNode.ChildNodes.Count; row++)
             {
                 var rows = collectionNode.ChildNodes[row];
@@ -67,28 +68,35 @@ public static class MemeSearch
                         var artNode = rows.ChildNodes[article];
                         if (artNode.NodeType == HtmlNodeType.Element)
                         {
-                            try
-                            {
-                                var art = await GetArticleInfo(artNode);
-                                if (art is not null)
-                                {
-                                    articles.Add(art);
-                                }
-                            }
-                            catch (Exception)
-                            {
-                                continue;
-                            }
-
+                            tasks.Add(AddArticleInfo(artNode, articles, index));
+                            index++;
                         }
                     }
                 }
             }
+
+            await Task.WhenAll(tasks);
         }
 
         StopwatchTimes[3] = Stopwatch.ElapsedMilliseconds;
+        
+        return articles.Where(article => article is not null).ToArray();
+    }
 
-        return articles;
+    private static async Task AddArticleInfo(HtmlNode articleNode, Article[] articles, int index)
+    {
+        try
+        {
+            var art = await GetArticleInfo(articleNode);
+            if (art is not null)
+            {
+                articles[index] = art;
+            }
+        }
+        catch (Exception)
+        {
+            return;
+        }
     }
 
     private static async Task<Article> GetArticleInfo(HtmlNode articleNode)
@@ -150,6 +158,7 @@ public static class MemeSearch
     /// <returns></returns>
     public static async Task<SearchResult> GetArticles(string query)
     {
+        Stopwatch = Stopwatch.StartNew();
         var url = GetQueryUrl(query);
 
         var html = await HttpClient.GetStringAsync(url);
@@ -175,6 +184,7 @@ public static class MemeSearch
     /// <returns></returns>
     public static async Task<SearchResult> GetArticleFromUrl(string url)
     {
+        Stopwatch = Stopwatch.StartNew();
         var html = await HttpClient.GetStringAsync(url);
 
         if (html.Contains("Sorry, but there were no results for"))
