@@ -12,7 +12,7 @@ SearchResult result = await MemeSearch.GetArticle("pepe");
 ```
 
 
-**To get a multiple Articles (I do NOT recommend this option because its very slow)**
+**To get a multiple Articles**
 ```cs
 using SharpYourMeme;
 
