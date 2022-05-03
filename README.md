@@ -1,6 +1,6 @@
 # SharpYourMeme
 A C# Interface for the KnowYourMeme Website
-Written in NET 6.0 and is extremly slow
+Written in NET 6.0.
 
 I tried to make it as user friendly as possible
 
