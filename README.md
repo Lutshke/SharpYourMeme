@@ -8,7 +8,7 @@ I tried to make it as user friendly as possible
 ```cs
 using SharpYourMeme;
 
-SearchResult result = await MemeSearch.GetArticle("pepe");
+SearchResult result = await Article.GetArticle("pepe");
 ```
 
 
@@ -16,12 +16,12 @@ SearchResult result = await MemeSearch.GetArticle("pepe");
 ```cs
 using SharpYourMeme;
 
-SearchResult result = await MemeSearch.GetArticles("pepe");
+SearchResult result = await Article.GetArticles("pepe");
 ```
 
 **Or get an article with url**
 ```cs
 using SharpYourMeme;
 
-SearchResult result = await MemeSearch.GetArticles("https://knowyourmeme.com/memes/shadilay");
+SearchResult result = await Article.GetArticles("https://knowyourmeme.com/memes/shadilay");
 ```
